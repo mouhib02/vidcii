@@ -219,14 +219,5 @@ The export path is separate from live playback. Terminal playback is optimized f
 - True-color output depends on terminal support
 - This is not a professional media player
 
-## Roadmap
-
-- audio track merging for exported videos
-- better export presets
-- webcam mode
-- Unicode block rendering
-- optional frame skipping for slow terminals
-
-## License
 
 MIT
