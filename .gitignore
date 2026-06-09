@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+*.log
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+exports/
+output/
