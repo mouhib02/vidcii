@@ -2,121 +2,231 @@
 
 vidcii is a small Python CLI that turns video files into ASCII art.
 
-It can either:
-1. play a video live inside the terminal, or
-2. export the video as a new ASCII-styled video file.
+It can play a video live inside the terminal, render optional ANSI color, play best-effort audio through an external backend, and export the result as a new ASCII-styled video file.
 
-## What the Project Is
+It is not meant to be a serious media player. It is a compact project for learning about video frames, terminal rendering, timing, and export pipelines.
 
-This is a Python CLI application that opens any standard video file, processes its frames sequentially in real-time, maps pixel intensities to ASCII characters, and draws them directly into the terminal or renders them into a file.
+## Demo
 
-## Why it Exists
+![vidcii demo](assets/vidcii-demo.gif)
 
-`vidcii` was created as a creative learning project to explore real-time video processing and command-line interfaces. It is designed to be lightweight, easy to understand, and explainable, with minimal external dependencies.
+The demo shows:
+
+- live ASCII playback in the terminal
+- optional color rendering
+- HD export mode
+- the exported ASCII-styled video result
+
+## What it does
+
+vidcii has two main modes.
+
+### 1. Terminal playback
+
+Read a video file frame by frame and redraw it in the terminal as ASCII characters.
+
+```bash
+python vidcii.py video.mp4
+```
+
+Useful options:
+
+```bash
+python vidcii.py video.mp4 --width 80 --fps 15
+python vidcii.py video.mp4 --charset dense
+python vidcii.py video.mp4 --invert
+python vidcii.py video.mp4 --color
+```
+
+### 2. ASCII video export
+
+Render the ASCII output into a new `.mp4` file.
+
+```bash
+python vidcii.py video.mp4 --export ascii_output.mp4
+```
+
+HD export:
+
+```bash
+python vidcii.py video.mp4 --export ascii_output.mp4 --export-preset hd
+```
+
+Color HD export:
+
+```bash
+python vidcii.py video.mp4 --export ascii_output.mp4 --export-preset hd --color
+```
+
+Export mode creates a new video file with ASCII characters drawn onto a real canvas. It does not depend on terminal size.
 
 ## Features
 
 - Play videos inside the terminal as ASCII art
-- Export videos into ASCII-styled `.mp4` files
-- Optional ANSI color mode
-- Optional best-effort audio playback with `ffplay` or `mpv`
-- Simple and dense ASCII character sets
+- Export videos as ASCII-styled `.mp4` files
+- Optional ANSI true-color terminal rendering
+- Optional best-effort audio playback using `ffplay` or `mpv`
+- Simple and dense character sets
 - Invert brightness mapping
-- Adjustable width and FPS
+- Adjustable playback width and FPS
+- Export presets: `small`, `medium`, `hd`
+- Custom export size, font scale, font thickness, and cell spacing
 
 ## Installation
 
-To set up and run `vidcii` locally:
-
-1. **Create and activate a virtual environment**:
-   ```bash
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-
-2. **Install the dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Usage Examples
-
 ```bash
-# Play video in the terminal
-python3 vidcii.py video.mp4
-
-# Play with color
-python3 vidcii.py video.mp4 --color
-
-# Play with best-effort audio
-python3 vidcii.py video.mp4 --audio --audio-backend ffplay
-
-# Export video as ASCII-styled MP4 (Default 1280x720)
-python3 vidcii.py video.mp4 --export ascii_output.mp4
-
-# HD export (1920x1080)
-python3 vidcii.py video.mp4 --export ascii_output.mp4 --export-preset hd
-
-# Custom export size in pixels
-python3 vidcii.py video.mp4 --export ascii_output.mp4 --export-width 1920 --export-height 1080
-
-# Color HD export
-python3 vidcii.py video.mp4 --export ascii_output.mp4 --color --export-preset hd
-
-# Export with custom font scale and cell spacing
-python3 vidcii.py video.mp4 --export ascii_output.mp4 --font-scale 0.5 --cell-width 10 --cell-height 15
+python -m venv .venv
 ```
 
-### Optional V1 Customizations:
-- **Set Specific Character Width and Frame Rate**:
-  ```bash
-  python3 vidcii.py path/to/video.mp4 --width 80 --fps 15
-  ```
-- **Use Dense Character Mapping and Inverted Colors**:
-  ```bash
-  python3 vidcii.py path/to/video.mp4 --charset dense --invert
-  ```
+Windows:
 
----
-
-## Required External Tools for Audio
-To use `--audio`, one of the following players must be installed on your system:
-- **mpv** (default backend)
-- **ffplay** (from ffmpeg)
-
-### Linux Install Examples:
-```bash
-sudo apt install mpv
-sudo apt install ffmpeg
+```powershell
+.venv\Scripts\activate
 ```
 
----
+Linux/macOS:
 
-## Export limitations and considerations
+```bash
+source .venv/bin/activate
+```
 
-The export mode writes a new ASCII-styled video file using OpenCV.
+Install dependencies:
 
-Current limitations and details:
-- **No Audio Track**: Exported videos do not include the original audio track yet.
-- **Export Resolution and Performance**: Higher export resolutions (like HD) take longer to render.
-- **Color Export Performance**: Color export (using RGB color sampling for each character) is slower than grayscale export.
-- **ASCII Density**: Using a very dense character set or width increases render times.
-- **Quality Parameters**: Render quality and character alignment depend on options like font size (`--font-scale`), cell dimensions (`--cell-width` / `--cell-height`), and width.
+```bash
+pip install -r requirements.txt
+```
 
----
+## Requirements
 
-## General Limitations
+Python dependency:
 
-* **Best-Effort Audio Sync**: In terminal play mode, audio synchronization is approximate and best-effort.
-* **Terminal Speed Affects Sync**: Slow terminal rendering or large window sizes can cause the video to lag behind the audio in live playback.
-* **Color Mode Performance**: Rendering in color in the terminal is slower than grayscale.
-* **TrueColor Support**: Not all terminal emulators support TrueColor (`\033[38;2;R;G;Bm`).
-* **No Playback Controls**: There are no playback controls (play, pause, fast forward) during playback yet.
+```text
+opencv-python
+```
+
+Optional audio backends:
+
+- `ffplay`, included with FFmpeg
+- `mpv`
+
+Audio playback is optional. The tool still works without them.
+
+## Usage
+
+Basic playback:
+
+```bash
+python vidcii.py video.mp4
+```
+
+Set playback width and FPS:
+
+```bash
+python vidcii.py video.mp4 --width 100 --fps 15
+```
+
+Use dense ASCII characters:
+
+```bash
+python vidcii.py video.mp4 --charset dense
+```
+
+Invert brightness:
+
+```bash
+python vidcii.py video.mp4 --invert
+```
+
+Use terminal color:
+
+```bash
+python vidcii.py video.mp4 --color
+```
+
+Play with best-effort audio:
+
+```bash
+python vidcii.py video.mp4 --audio --audio-backend ffplay
+```
+
+Export an ASCII-styled video:
+
+```bash
+python vidcii.py video.mp4 --export ascii_output.mp4
+```
+
+Export in HD:
+
+```bash
+python vidcii.py video.mp4 --export ascii_output.mp4 --export-preset hd
+```
+
+Export in color HD:
+
+```bash
+python vidcii.py video.mp4 --export ascii_output.mp4 --export-preset hd --color
+```
+
+## Export options
+
+```bash
+--export OUTPUT_PATH
+--export-preset small|medium|hd
+--export-width 1280
+--export-height 720
+--font-scale 0.45
+--font-thickness 1
+--cell-width 8
+--cell-height 12
+```
+
+Default export size:
+
+```text
+medium: 1280x720
+```
+
+Presets:
+
+```text
+small  = 854x480
+medium = 1280x720
+hd     = 1920x1080
+```
+
+Manual export width and height override the preset.
+
+## How it works
+
+vidcii reads frames from a video using OpenCV.
+
+For each frame:
+
+1. resize the frame
+2. convert brightness into ASCII characters
+3. optionally sample color from the original frame
+4. either draw the frame in the terminal or render it onto a video canvas
+
+The export path is separate from live playback. Terminal playback is optimized for screen output. Export mode is optimized for creating a clearer video file.
+
+## Limitations
+
+- Exported videos do not include the original audio track yet
+- Audio playback during live mode is best-effort
+- Terminal rendering speed affects live playback smoothness
+- Color mode is slower than grayscale mode
+- HD export takes longer than small or medium export
+- True-color output depends on terminal support
+- This is not a professional media player
 
 ## Roadmap
 
-- [x] **Color Mode**: TrueColor ANSI rendering mode.
-- [x] **Audio Support**: Synchronized audio playback using mpv and ffplay backends.
-- [ ] **Export to Text Animation**: Output ASCII frames to a file format (e.g. HTML or text sequence).
-- [ ] **Webcam Mode**: Feed live webcam video directly to the terminal.
-- [ ] **Unicode Block Rendering**: High-fidelity block rendering (`▄`, `▀`, `█`).
+- audio track merging for exported videos
+- better export presets
+- webcam mode
+- Unicode block rendering
+- optional frame skipping for slow terminals
+
+## License
+
+MIT
